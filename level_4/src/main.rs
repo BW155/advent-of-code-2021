@@ -9,11 +9,19 @@ struct Board {
 }
 
 impl Board {
-    pub fn check_called_numbers(self, numbers: &Vec<u8> ) -> bool {
-        if self.cols.iter().any(|col| col.iter().all(|c| numbers.contains(c))) {
+    pub fn check_called_numbers(self, numbers: &Vec<u8>) -> bool {
+        if self
+            .cols
+            .iter()
+            .any(|col| col.iter().all(|c| numbers.contains(c)))
+        {
             return true;
         }
-        if self.rows.iter().any(|row| row.iter().all(|c| numbers.contains(c))) {
+        if self
+            .rows
+            .iter()
+            .any(|row| row.iter().all(|c| numbers.contains(c)))
+        {
             return true;
         }
         false
@@ -21,17 +29,28 @@ impl Board {
 
     pub fn get_unchecked_numbers(&self, numbers: &Vec<u8>) -> Vec<u16> {
         let mut result = Vec::new();
-        self.rows.iter().for_each(|row| result.extend(row.iter().filter(|num| !numbers.contains(num)).map(|num| *num as u16)));
+        self.rows.iter().for_each(|row| {
+            result.extend(
+                row.iter()
+                    .filter(|num| !numbers.contains(num))
+                    .map(|num| *num as u16),
+            )
+        });
         result
     }
 }
 
 fn main() {
     let file = File::open("input").unwrap();
-    let mut lines = io::BufReader::new(file)
-        .lines();
+    let mut lines = io::BufReader::new(file).lines();
 
-    let mut numbers: Vec<u8> = lines.next().unwrap().unwrap().split(",").filter_map(|s| s.parse::<u8>().ok()).collect();
+    let mut numbers: Vec<u8> = lines
+        .next()
+        .unwrap()
+        .unwrap()
+        .split(",")
+        .filter_map(|s| s.parse::<u8>().ok())
+        .collect();
     let mut boards = Vec::new();
 
     let mut peek = lines.peekable();
@@ -41,15 +60,20 @@ fn main() {
             let mut rows: Vec<Vec<u8>> = Vec::new();
             for _ in 0..5 {
                 let row = peek.next().unwrap().unwrap();
-                rows.push(row.split(" ").filter_map(|s| s.parse::<u8>().ok()).collect())
+                rows.push(
+                    row.split(" ")
+                        .filter_map(|s| s.parse::<u8>().ok())
+                        .collect(),
+                )
             }
-            let cols: Vec<Vec<u8>> = (0..5).map(|i| rows.iter().map(|row| row[i]).collect()).collect();
-            boards.push(Board {rows, cols});
+            let cols: Vec<Vec<u8>> = (0..5)
+                .map(|i| rows.iter().map(|row| row[i]).collect())
+                .collect();
+            boards.push(Board { rows, cols });
         }
     }
 
     println!("numbers: {}, boards: {}", numbers.len(), boards.len());
-
 
     // Part One
 
@@ -63,7 +87,11 @@ fn main() {
                 for b in &boards {
                     if b.clone().check_called_numbers(&numbers_called) {
                         let last_number = *numbers_called.last().unwrap() as u16;
-                        let sum: u16 = b.clone().get_unchecked_numbers(&numbers_called).iter().sum();
+                        let sum: u16 = b
+                            .clone()
+                            .get_unchecked_numbers(&numbers_called)
+                            .iter()
+                            .sum();
                         println!("WINNER");
                         println!("Winning number: {}", last_number);
                         println!("Final score: {}", sum * last_number);
@@ -87,7 +115,11 @@ fn main() {
                 if b.clone().check_called_numbers(&numbers_called) {
                     if remaining_boards.len() == 1 {
                         let last_number = *numbers_called.last().unwrap() as u16;
-                        let sum: u16 = b.clone().get_unchecked_numbers(&numbers_called).iter().sum();
+                        let sum: u16 = b
+                            .clone()
+                            .get_unchecked_numbers(&numbers_called)
+                            .iter()
+                            .sum();
                         println!("LAST WINNER");
                         println!("LAST Winning number: {}", last_number);
                         println!("LAST Final score: {}", sum * last_number);

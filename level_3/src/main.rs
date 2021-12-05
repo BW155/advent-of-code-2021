@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io;
 use std::io::BufRead;
 
-
 fn convert_bits_num(bits: &Vec<u32>) -> u32 {
     let mut num = 0;
     for bit in bits {
@@ -17,10 +16,17 @@ fn main() {
     let file = File::open("input").unwrap();
     let bitrows = io::BufReader::new(file)
         .lines()
-        .map(|line| line.unwrap().split("").filter_map(|s| s.parse::<u32>().ok()).collect())
+        .map(|line| {
+            line.unwrap()
+                .split("")
+                .filter_map(|s| s.parse::<u32>().ok())
+                .collect()
+        })
         .collect::<Vec<Vec<u32>>>();
 
-    let bitcols: Vec<Vec<u32>> = (0..BIT_SIZE).map(|i| bitrows.iter().map(|row| row[i]).collect()).collect();
+    let bitcols: Vec<Vec<u32>> = (0..BIT_SIZE)
+        .map(|i| bitrows.iter().map(|row| row[i]).collect())
+        .collect();
 
     let length: u32 = bitcols[0].len() as u32;
 
@@ -28,24 +34,46 @@ fn main() {
 
     let commons: Vec<u32> = bitcols
         .iter()
-        .map(|bts| if bts.iter().sum::<u32>() > length / 2 {1} else {0})
+        .map(|bts| {
+            if bts.iter().sum::<u32>() > length / 2 {
+                1
+            } else {
+                0
+            }
+        })
         .collect();
     let uncommon: Vec<u32> = bitcols
         .iter()
-        .map(|bts| if bts.iter().sum::<u32>() > length / 2 {0} else {1})
+        .map(|bts| {
+            if bts.iter().sum::<u32>() > length / 2 {
+                0
+            } else {
+                1
+            }
+        })
         .collect();
 
     let gamma = convert_bits_num(&commons);
     let epsilon = convert_bits_num(&uncommon);
 
-    println!("gamma: {}, epsilon: {}, multiply: {}", gamma, epsilon, gamma * epsilon);
+    println!(
+        "gamma: {}, epsilon: {}, multiply: {}",
+        gamma,
+        epsilon,
+        gamma * epsilon
+    );
 
     // Part Two
 
     let oxygen_num = find_ratings(&bitrows, true);
     let co2_num = find_ratings(&bitrows, false);
 
-    println!("oxygen: {}, co2: {}, multiply: {}", oxygen_num, co2_num, oxygen_num * co2_num);
+    println!(
+        "oxygen: {}, co2: {}, multiply: {}",
+        oxygen_num,
+        co2_num,
+        oxygen_num * co2_num
+    );
 }
 
 fn find_ratings(data: &Vec<Vec<u32>>, oxygen: bool) -> u32 {
