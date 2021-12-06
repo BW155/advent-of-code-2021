@@ -2,28 +2,27 @@ use std::fs::File;
 use std::io;
 use std::io::BufRead;
 
-
 fn fishing(fish: &Vec<u8>, days: u16) -> u64 {
-    let mut ages: Vec<u64> = vec![0; 9];
-    fish.iter().for_each(|f| ages[*f as usize] += 1);
+    let mut timers: Vec<u64> = vec![0; 9];
+    fish.iter().for_each(|f| timers[*f as usize] += 1);
 
     for _ in 0..days {
-        let add = ages[0];
+        let zero = timers[0];
 
         for age in 1..9 {
-            if ages[age] > 0 {
-                let add_age = ages[age];
-                ages[age - 1] += add_age;
-                ages[age] -= add_age;
+            if timers[age] > 0 {
+                let add_timer = timers[age];
+                timers[age - 1] += add_timer;
+                timers[age] -= add_timer;
             }
         }
 
-        ages[6] += add;
-        ages[8] += add;
-        ages[0] -= add;
+        timers[6] += zero;
+        timers[8] += zero;
+        timers[0] -= zero;
     }
 
-    ages.iter().sum()
+    timers.iter().sum()
 }
 
 fn main() {
