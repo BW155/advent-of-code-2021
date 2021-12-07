@@ -12,8 +12,8 @@ fn main() {
         .unwrap()
         .unwrap()
         .split(",")
-        .filter_map(|f| f.parse::<u16>().ok())
-        .collect::<Vec<u16>>();
+        .filter_map(|f| f.parse::<u32>().ok())
+        .collect::<Vec<u32>>();
 
     let max = *positions.iter().max().unwrap() as usize;
     let min = *positions.iter().min().unwrap() as usize;
@@ -33,18 +33,12 @@ fn main() {
 
     // Part Two
 
-    let mut fuel_cost: Vec<u32> = Vec::new();
-    let mut cost: u32 = 0;
-    for i in 1..max + 2 {
-        fuel_cost.push(cost);
-        cost += i as u32;
-    }
-
     let best_fuel: u32 = (min..max)
         .map(|i| {
             positions
                 .iter()
-                .map(|p| fuel_cost[(i as i16 - *p as i16).abs() as usize])
+                .map(|p| (i as i32 - *p as i32).abs() as u32)
+                .map(|p| (p.pow(2) + p) / 2)
                 .sum()
         })
         .min()
