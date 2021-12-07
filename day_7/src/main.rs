@@ -20,21 +20,16 @@ fn main() {
 
     // Part One
 
-    let mut best_i = 0;
-    let mut best_fuel = u32::MAX;
-
-    for i in min..max {
-        let mut fuel: u32 = 0;
-        for pos in &positions {
-            fuel += (i as i16 - *pos as i16).abs() as u32;
-        }
-        if best_fuel > fuel {
-            best_i = i;
-            best_fuel = fuel;
-        }
-    }
-
-    println!("Best i: {}, best fuel: {}", best_i, best_fuel);
+    let best_fuel: u32 = (min..max)
+        .map(|i| {
+            positions
+                .iter()
+                .map(|p| (i as i16 - *p as i16).abs() as u32)
+                .sum()
+        })
+        .min()
+        .unwrap();
+    println!("best fuel: {}", best_fuel);
 
     // Part Two
 
@@ -45,19 +40,15 @@ fn main() {
         cost += i as u32;
     }
 
-    let mut best_i = 0;
-    let mut best_fuel = u32::MAX;
+    let best_fuel: u32 = (min..max)
+        .map(|i| {
+            positions
+                .iter()
+                .map(|p| fuel_cost[(i as i16 - *p as i16).abs() as usize])
+                .sum()
+        })
+        .min()
+        .unwrap();
 
-    for i in min..max + 1 {
-        let mut fuel: u32 = 0;
-        for pos in &positions {
-            fuel += fuel_cost[(i as i16 - *pos as i16).abs() as usize];
-        }
-        if best_fuel > fuel {
-            best_i = i;
-            best_fuel = fuel;
-        }
-    }
-
-    println!("Best i: {}, best fuel: {}", best_i, best_fuel);
+    println!("Best fuel: {}", best_fuel);
 }
