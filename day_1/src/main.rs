@@ -3,7 +3,7 @@ use std::io;
 use std::io::BufRead;
 
 fn main() {
-    let file = File::open("input").unwrap();
+    let file = File::open("input_example").unwrap();
     let numbers: Vec<u16> = io::BufReader::new(file)
         .lines()
         .map(|line| line.unwrap().parse::<u16>().unwrap())
